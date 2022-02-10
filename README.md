@@ -56,6 +56,16 @@ def render(assigns) do
 <a href="#" phx-click="guess" phx-value-number=<%= n %>><%= n %></a>
 ```
 
+You can see that we match only function calls where the first argument is "guess", and the second is a map with a key of "number". Those are the arguments we set in our phx-click and phx-value link attributes.
+
+## Phoenix and Authentication
+
+We'll generate the bulk og our code with the `phx.gen.auth` generator, and then we'll tweak that code to do what we want. This generator is by far the best solution for Phoenix authentication.
+
+```bash
+mix phx.gen.auth Accounts User users
+```
+
 
 
 
