@@ -1,6 +1,6 @@
 # Programming Phoenix LiveView
 
-## the LiveView Lifecycle
+## The LiveView Lifecycle
 
 LiveView are about state, and LiveView manages state in structs called sockets. The module `Phoenix.LiveView.Socket` creates these structs.
 
@@ -66,7 +66,74 @@ We'll generate the bulk og our code with the `phx.gen.auth` generator, and then 
 mix phx.gen.auth Accounts User users
 ```
 
+The code `mix phx.gen.auth Accounts User users` built some migrations for us.
 
+```bash
+mix ecto.migrate
+```
+### Protect Routes with Plugs
+
+The authentication service is defined in the file `lib/pento_web/controllers/user_auth.ex`. 
+
+```bash
+iex> exports PentaWeb.UserAuth
+fetch_current_user/2
+log_in_user/2
+log_in_user/3
+log_out_user/2
+redirect_if_user_is_authenticated/2
+require_authenticated_user/2
+```
+All of these functions are plugs. The last two plugs direct users between pages based on whether they are logged in or not.
+
+auth/pento/lib/pento_web/router.ex
+
+```bash
+pipeline :browser do
+  plug :accepts, ["html"]
+  plug :fetch_session
+  plug :fetch_live_flash
+  plug :put_root_layout, {PentoWeb.LayoutView, :root}
+  plug :protect_from_forgery
+  plug :put_secure_browser_headers
+  plug :fetch_current_user
+end
+```
+
+The `fetch_current_user/2` function plug will add a key in `assigns` called `current_user` if the user is logged in.
+
+```bash
+scope "/", PentoWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live "/guess", WrongLive
+
+    get "/users/settings", UserSettingsController, :edit
+    ...
+ end 
+```
+
+## Generators: Contexts and Schemas
+
+The Phoenix Live generator is a utility that generates code supporting full CRUD functionality for a given resource. This includes the backend schema and context code, as well as the frontend code including routes, LiveView and templates.
+
+```bash
+mix phx.gen.live Catalog Product products name:string description:string unit_price:float sku:integer:unique
+```
+We separate the concerns for each resource into two layers, the `boundary` and `core`. The `Catalog` context represents the boundary layer, it is the API through which external input can make its way into the application.
+
+The `Product` schema, represents the application's core. The core is responsible for managing and interacting with the database.
+
+The boundary code isn't just an API layer. It's the place we try to hold all uncertainty. Out context has at least these responsibilities:
+
+* Access External Services: The context allows a single point of access for external services.
+* Abstract Away Tedious Details: The context abstracts away tedious, inconvenient concepts.
+* Handle uncertainty: The context handles uncertainty, often by using result tuples.
+* Present a single, common API: The context provides a single access point for a family of services.
+
+External services will always be accessed from the context. Accessing external services may result in failure, and managing this unpredictability is squarely the responsibility of the context. Our application’s database is an external service, and the Catalog context provides the service of database access.
+
+Elixir will always use Ecto to transact against the database. But the work of using Ecto to cast and validate changesets, or execute common queries, can be repetitive. Phoenix contexts provide an API through which we can abstract away these tedious details, and our generated context is no different.
 
 
 
