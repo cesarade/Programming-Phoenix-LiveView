@@ -1,6 +1,6 @@
 # Programming Phoenix LiveView
 
-## the LiveView Lifecycle
+## The LiveView Lifecycle
 
 LiveView are about state, and LiveView manages state in structs called sockets. The module `Phoenix.LiveView.Socket` creates these structs.
 
@@ -66,6 +66,11 @@ We'll generate the bulk og our code with the `phx.gen.auth` generator, and then 
 mix phx.gen.auth Accounts User users
 ```
 
+The code `mix phx.gen.auth Accounts User users` built some migrations for us.
+
+```bash
+mix ecto.migrate
+```
 
 
 
