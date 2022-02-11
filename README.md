@@ -193,3 +193,24 @@ This generate an HTML link:
 <a data-phx-link="patch" data-phx-link-state="push" href = "/products/1/edit">Edit</a>
 ```
 
+If you clicking the link will change the URL in the browser bar, courtesy of a JavaScript feature called "push state navigation". But it won’t send a web request to reload the page. Instead, clicking this link will kick off LiveView’s change management workflow— the `handle_params/3` function will be invoked for the linked LiveView, followed by the `render/1` function. So, when you click the edit link on the product index template, you’ll see a modal pop up with the edit product form.
+
+Navigating with `live_patch/2` causes that the request skips the call to `mount/3`. The handle_params/ 3 function will therefore be responsible for using these data points to update the socket with the correct information so that the template can render with the markup for editing a product.
+
+### Establish Product Edit State
+
+You can see that the generated `handle_params/3` function invokes a helper function, `apply_action/3` to do exactly that:
+
+```bash
+defp apply_action(socket, :edit, %{"id" => id}) do
+    socket
+    |> assign(:page_title, "Edit Product")
+    |> assign(:product, Catalog.get_product!(id))
+  end
+```
+
+
+
+
+
+
