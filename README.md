@@ -161,3 +161,35 @@ If we’ve defined an explicit render/ 1 function, the behaviour will use it. If
 
 Our LiveView’s index state is complete and ready to be rendered! Since our live view doesn’t implement a render function, the behaviour will fall back to the default render/ 1 function and render the template that matches the name of the LiveView file, pento/ pento_web/ live/ index.html.heex.
 
+### Render Product Index State
+
+LiveView’s built-in templates use the .heex extension. HEEx, is similar to EEX except that it is designed to minimize the amount of data sent down to the client over the WebSocket connection. Part of the job of these templates is to track state changes in the live view socket and only update portions of the template impacted by these state changes.
+
+When that data changes, the HEEx template is re-evaluated, and the live view will keep track of any differences from one evaluation to the next. This allows the live view to only do the work of re-rendering portions of the template that have actually changed based on changes to the state held in socket assigns. In this way, HEEx templates are highly efficient
+
+### Handle Change for the Product Edit
+
+The `ProductLive.Index` live view will also support the Product Edit and Product New features by using the change management workflow to alter socket state with event handlers.
+
+When we navigate to the Product Index route; `/products`, the LiveView lifecycle that kick-off first calls the `mount/3` lifecycle function, followed by `render/1`. If, however, we want to access and use the live action from socket assigns, we must do so in the `handle_params/3` lifecycle function. This callback, if it is implemented, is called right after the `mount/3`:
+
+```bash
+1. GET /product
+2. mount/3
+3. handle_params/3
+4. render/1
+4. browser renders html
+```
+
+#### Live Navigation with `live_patch/2`
+
+```bash
+<span><%= live_patch "Edit", to: Routes.product_index_path(@socket, :edit, product) %></span>
+```
+
+This generate an HTML link:
+
+```bash
+<a data-phx-link="patch" data-phx-link-state="push" href = "/products/1/edit">Edit</a>
+```
+
