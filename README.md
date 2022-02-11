@@ -145,6 +145,7 @@ When we say that `mount/3` happens before `render/1` in a live view, we don't me
 
 If we’ve defined an explicit render/ 1 function, the behaviour will use it. If not, LiveView will render a template based on the name of the live view file. There’s no explicit render/ 1 function defined in the ProductLive.Index live view, so our live view will render the template in the index.html.heex file
 
+```bash
 %{
   __changed__: %{greeting: true, products: true},
   flash: %{},
@@ -156,6 +157,7 @@ If we’ve defined an explicit render/ 1 function, the behaviour will use it. If
     }
   ]
 }
+```
 
 Our LiveView’s index state is complete and ready to be rendered! Since our live view doesn’t implement a render function, the behaviour will fall back to the default render/ 1 function and render the template that matches the name of the LiveView file, pento/ pento_web/ live/ index.html.heex.
 
