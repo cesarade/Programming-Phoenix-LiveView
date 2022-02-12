@@ -6,11 +6,18 @@ defmodule PentoWeb.ProductLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :products, list_products())}
+    IO.puts(">>>>>>>>>>>>><<<<<,")
+    {
+      :ok,
+      socket
+      |> assign(:products, list_products())
+      |> assign(:greeting, "Welcome to Pento!")
+    }
   end
 
   @impl true
   def handle_params(params, _url, socket) do
+    # IO.inspect socket.assigns
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
