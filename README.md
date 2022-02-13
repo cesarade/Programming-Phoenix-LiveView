@@ -275,4 +275,13 @@ end
 
 If the changeset’s action is empty, then no errors are set on the form object— even if the changeset is invalid and has a non-empty `:errors` value.
 
+## LiveView Form Bindings
+
+By default, binding `phx-submit` events causes three things to occur on the client:
+
+* The form's inputs are set to "readonly"
+* The submit button is desabled
+* The "phx-submit-loading" CSS class is applied to the form
+
+While the form is being submitted, no further form submissions can occur, since LiveView JavaScript disables the submit button. Our code uses the phx-disable-with binding to configure the text of a disabled submit button. The phx-debounce binding let’s you specify an integer timeout value or a value of blur. Use an integer to delay the event by the specified number of milliseconds. Use blur to have LiveView JavaScript emit the event when the user finishes and tabs away from the field.
 
