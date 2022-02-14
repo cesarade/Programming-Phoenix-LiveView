@@ -209,8 +209,79 @@ defp apply_action(socket, :edit, %{"id" => id}) do
   end
 ```
 
+### LiveView Layers: The Modal Component
 
+```bash
+LiveView: index.html.heex => Modal dialog function: LiveHelpers.live_modal => Component: FormComponent
+```
+If the `ProductLive.Index` live view's state contains the :edit or :new live action, then the index template will invoke some code that renders the modal component.
 
+```bash
+<%= if @live_action in [:new, :edit] do %>
+  <.modal return_to={Routes.product_index_path(@socket, :index)}>
+    <.live_component
+      module={PentoWeb.ProductLive.FormComponent}
+      id={@product.id || :new}
+      title={@page_title}
+      action={@live_action}
+      product={@product}
+      return_to={Routes.product_index_path(@socket, :index)}
+    />
+  </.modal>
+<% end %>
+```
 
+The `live_modal/2` function wraps up two concepts. The first is a CSS concept called a modal dialog. The generated CSS applied to the modal component will disallow interaction with the window underneath. The second concept is the component itself.
 
+## Forms and Changesets
+
+```bash
+<.form
+    let={f}
+    for={@changeset}
+    id="promo-form"
+    phx-change="validate"
+    phx-submit="save">
+
+    <%= label f, :first_name %>
+    <%= text_input f, :first_name %>
+    <%= error_tag f, :first_name %>
+
+    <%= label f, :email %>
+    <%= text_input f, :email %>
+    <%= error_tag f, :email %>
+
+    <%= submit "Send Promo", phx_disable_with: "Sending promo..." %>
+</.form>
+```
+
+The `<.form>` syntax is how you invoke a function component. A function component is a function, built with the help of the `Phoenix.Component behaviour`, that takes in an argument of an assigns map and returns a rendered HEEx template. The LiveView framework exposes this `form/1` function for us. It’s built on top of the `form_for/4` function and returns a form for the given changeset.
+
+Our form implements two LiveView bindings, `phx-change` and `phx-submit`. The `phx-change` event will send a `"validate"` event each time the form changes.
+
+```bash
+def handle_event("validate", %{"recipient" => recipient_params}, %{assigns: %{recipient: recipient}} = socket) do
+  changeset =
+  recipient
+  |> Promo.change_recipient(recipient_params)
+  |> Map.put(:action, :validate)
+  {
+    :noreply,
+    socket
+    |> assign(:changeset, changeset)
+  }
+end
+```
+
+If the changeset’s action is empty, then no errors are set on the form object— even if the changeset is invalid and has a non-empty `:errors` value.
+
+## LiveView Form Bindings
+
+By default, binding `phx-submit` events causes three things to occur on the client:
+
+* The form's inputs are set to "readonly"
+* The submit button is desabled
+* The "phx-submit-loading" CSS class is applied to the form
+
+While the form is being submitted, no further form submissions can occur, since LiveView JavaScript disables the submit button. Our code uses the phx-disable-with binding to configure the text of a disabled submit button. The phx-debounce binding let’s you specify an integer timeout value or a value of blur. Use an integer to delay the event by the specified number of milliseconds. Use blur to have LiveView JavaScript emit the event when the user finishes and tabs away from the field.
 
