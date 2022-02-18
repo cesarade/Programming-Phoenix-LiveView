@@ -1,17 +1,3 @@
-# Fundamenmtos Depoaspdoas
-introducciond de la materia
-
-## Creacion de variables
-
-## Condicional
-
-asdjaksd
-
-$$
-\bar{x} = \sum_{i=1}^n x_i
-$$
-
-
 # Programming Phoenix LiveView
 
 ## The LiveView Lifecycle
