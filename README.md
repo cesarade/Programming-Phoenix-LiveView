@@ -1,3 +1,15 @@
+# Fundamenmtos Depoaspdoas
+introducciond de la materia
+
+## Creacion de variables
+
+## Condicional
+
+asdjaksd
+
+
+
+
 # Programming Phoenix LiveView
 
 ## The LiveView Lifecycle
