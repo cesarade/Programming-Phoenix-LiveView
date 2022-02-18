@@ -7,7 +7,9 @@ introducciond de la materia
 
 asdjaksd
 
-
+$$
+\bar{x} = \sum_{i=1}^n x_i
+$$
 
 
 # Programming Phoenix LiveView
